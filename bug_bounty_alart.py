@@ -15,7 +15,6 @@ import datetime
 from pytz import timezone
 import json
 import http.client
-from pdpyras import APISession
 from apscheduler.schedulers.background import BackgroundScheduler
 import time
 import socket
