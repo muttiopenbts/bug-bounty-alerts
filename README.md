@@ -6,6 +6,15 @@ HackerOne to Pager Duty integration for automatic alerts.
 ```
 git clone <THIS REPO>
 ```
+* Prepare python3
+```
+# ubuntu 20 pip installation
+sudo apt update
+sudo apt install python3-pip
+# install pipenv
+python3 -m pip install pipenv
+# Make sure to add pipenv location to you path
+```
 * Install packages
 ```
 cd <REPO NAME>
