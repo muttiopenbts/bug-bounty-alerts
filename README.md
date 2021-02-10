@@ -14,6 +14,8 @@ sudo apt install python3-pip
 # install pipenv
 python3 -m pip install pipenv
 # Make sure to add pipenv location to you path
+# Optional but recommended, install https://github.com/pyenv/pyenv-installer
+curl https://pyenv.run | bash
 ```
 * Install packages
 ```
