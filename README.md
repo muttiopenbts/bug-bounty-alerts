@@ -28,6 +28,7 @@ export PD_SERVICE_ID=<>
 export PD_TOKEN=<>
 export H1_PROGRAM_NAME=<>
 export H1_API_KEY_NAME=<>
+export H1_API_KEY=<>
 ```
 # Run
 ```
