@@ -24,6 +24,7 @@ pipenv install
 ```
 # Configure
 ```
+pipenv shell
 export PD_SERVICE_ID=<>
 export PD_TOKEN=<>
 export H1_PROGRAM_NAME=<>
@@ -32,5 +33,6 @@ export H1_API_KEY=<>
 ```
 # Run
 ```
-python ./bug_bounty_alart.py
+# pipenv shell first
+python3 ./bug_bounty_alart.py
 ```
