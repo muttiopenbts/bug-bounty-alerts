@@ -8,6 +8,8 @@ requests = "*"
 python-decouple = "*"
 pytz = "*"
 apscheduler = "*"
+boto = "*"
+boto3 = "*"
 
 [dev-packages]
 

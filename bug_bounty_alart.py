@@ -19,18 +19,75 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import time
 import socket
 from typing import List, Set, Dict, Tuple, Optional
+import boto3
+import base64
+from botocore.exceptions import ClientError
+import json
+import pprint
 
 
 # Configuration settings
 settings = {
-    'h1_api_token': config('H1_API_KEY'),
-    'h1_api_token_name': config('H1_API_KEY_NAME'),
-    'h1_severities': ['high','critical'],
-    'h1_states': ['triaged'],
-    'h1_program_name': [config('H1_PROGRAM_NAME')],
-    'pd_api_token': config('PD_TOKEN'),
-    'pd_service_id': config('PD_SERVICE_ID'),
+    'h1_severities': ['high','critical'], # Can edit
+    'h1_states': ['triaged'], # Can edit
+    # Secrets
+    'h1_api_token': config('H1_API_KEY', default=None),
+    'h1_api_token_name': config('H1_API_KEY_NAME', default=None),
+    'h1_program_name': [config('H1_PROGRAM_NAME', default=None)],
+    'pd_api_token': config('PD_TOKEN', default=None),
+    'pd_service_id': config('PD_SERVICE_ID', default=None),
 }
+
+# Optional: Manage secrets through AWS KMS
+settings['aws_access_key_id'] = config('AWS_ACCESS_KEY_ID', default=None)
+settings['aws_secret_access_key'] = config('AWS_SECRET_ACCESS_KEY', default=None)
+settings['region_name'] = config('AWS_REGION_NAME', default=None)
+settings['SecretId'] = config('AWS_SECRET_ID', default=None)
+
+def get_aws_secrets(settings):
+    '''Attempt to retrieve secret settings from aws kms.
+    Will authenticate to kms, collect key, value pairs and store to 
+    similar named settings dict keys.
+    AWS key names must match setting names and case.
+    '''
+    if (settings.get('aws_access_key_id')
+        and settings.get('aws_secret_access_key')
+        and settings.get('region_name')) == None:
+        print(f'Aws Kms will not be used.')
+
+        return
+
+    secrets_manager = boto3.Session(
+            aws_access_key_id=settings.get('aws_access_key_id'), 
+            aws_secret_access_key=settings.get('aws_secret_access_key'), 
+            region_name=settings.get('region_name')).client('secretsmanager')
+
+    secret_settings_jstring = secrets_manager.get_secret_value(SecretId=settings.get('SecretId')).get('SecretString')
+    secret_settings_dict = json.loads(secret_settings_jstring)
+    
+    # print(f'Aws secrets:')
+    # pprint.pp(secret_settings_dict)
+
+    settings['h1_api_token'] = secret_settings_dict['H1_API_KEY']
+    settings['h1_api_token_name'] = secret_settings_dict.get('H1_API_KEY_NAME')
+    settings['h1_program_name'] = [secret_settings_dict.get('H1_PROGRAM_NAME')]
+    settings['pd_api_token'] = secret_settings_dict.get('PD_TOKEN')
+    settings['pd_service_id'] = secret_settings_dict.get('PD_SERVICE_ID')
+
+    return secret_settings_dict
+
+
+def is_settings_complete(settings):
+    if (settings.get('h1_api_token')
+        and settings.get('h1_api_token_name')
+        and settings.get('h1_program_name')
+        and settings.get('pd_api_token')
+        and settings.get('pd_service_id')) == None:
+        
+        print(f'PD and HackerOne settings not complete.')
+        return
+    else:
+        return True
 
 
 def get_h1_report(**kwargs: str) -> dict:
@@ -308,5 +365,24 @@ def main():
     except Exception:
         scheduler.shutdown()
 
+
 if __name__ == '__main__':
-    main()
+    # First try to retrieve secrets using AWS method
+    aws_result = get_aws_secrets(settings)
+    aws_key_names = None
+    
+    if aws_result:
+        aws_key_names = aws_result.keys()
+        print(f'aws_key_names:')
+        pprint.pp(aws_key_names)
+    
+    if is_settings_complete(settings):
+        # print(f'Settings:')
+        # pprint.pp(settings)
+        main()
+    else:
+        print(f'aws_key_names:')
+        pprint.pp(aws_key_names)
+        # print(f'Settings:')
+        # pprint.pp(settings)
+        print(f'Please update settings.')
