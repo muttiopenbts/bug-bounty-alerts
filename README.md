@@ -23,6 +23,23 @@ cd <REPO NAME>
 pipenv install
 ```
 # Configure
+Two options exists for storing and accessing secrets/tokens. Either AWS Secrets manager, or environment variables.
+If using AWS, populate script environment variables with following values
+```
+pipenv shell
+export AWS_ACCESS_KEY_ID=<>
+export AWS_SECRET_ACCESS_KEY=<>
+export AWS_REGION_NAME=<>
+export AWS_SECRET_ID=<>
+```
+Create key values in AWS with following names
+* PD_SERVICE_ID
+* PD_TOKEN
+* H1_PROGRAM_NAME
+* H1_API_KEY_NAME
+* H1_API_KEY
+
+If not using AWS, store secrets in follwoing environment variables
 ```
 pipenv shell
 export PD_SERVICE_ID=<>
