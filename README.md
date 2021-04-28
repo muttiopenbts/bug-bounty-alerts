@@ -51,7 +51,7 @@ export H1_API_KEY=<>
 # Run
 ```
 # pipenv shell first
-python3 ./bug_bounty_alart.py
+python3 ./bug_bounty_alert.py
 ```
 # Todo
 AWS ECS support.
