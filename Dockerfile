@@ -10,19 +10,24 @@ ENV PYTHONFAULTHANDLER 1
 # Install dependencies
 RUN apt update && apt install -y \
     python3.9 \
+    git \
     python3-pip
 
 RUN python3 -m pip install pipenv
 
 RUN curl https://pyenv.run | bash
 
-WORKDIR '/app'
+RUN git clone https://github.com/muttiopenbts/bug-bounty-alerts.git
 
-COPY ./bug_bounty_alert.py .
-COPY ./Pipfile.lock .
-COPY ./Pipfile .
+WORKDIR './bug-bounty-alerts'
+
+#COPY ./bug-bounty-alerts/bug_bounty_alert.py .
+#COPY ./bug-bounty-alerts/Pipfile.lock .
+#COPY ./bug-bounty-alerts/Pipfile .
 
 RUN pipenv install --system --deploy
 
 # Run the application
-ENTRYPOINT python3 ./bug_bounty_alert.py
+#CMD ["watch", "date"]
+ENTRYPOINT python3 -c "exec(\"import sys\nwhile 1:\n\tprint(f'...')\")"
+#ENTRYPOINT python3 ./bug_bounty_alert.py
