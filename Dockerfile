@@ -1,21 +1,28 @@
-FROM ubuntu:18.04
-ENV abc=hello
+FROM ubuntu:20.04
+ENV TEST_RESULT=fail
+
+# Setup env
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONFAULTHANDLER 1
 
 # Install dependencies
-RUN apt-get update && \
- apt-get -y install apache2
+RUN apt update && apt install -y \
+    python3.9 \
+    python3-pip
 
-# Install apache and write hello world message
-RUN echo "Hello World!${MYAPIKEY:-MISSING}rrrrr" > /var/www/html/index.html
-RUN echo "Hello World Again!${abc}rrrrr" >> /var/www/html/index.html
+RUN python3 -m pip install pipenv
 
-# Configure apache
-RUN echo '. /etc/apache2/envvars' > /root/run_apache.sh && \
- echo 'mkdir -p /var/run/apache2' >> /root/run_apache.sh && \
- echo 'mkdir -p /var/lock/apache2' >> /root/run_apache.sh && \ 
- echo '/usr/sbin/apache2 -D FOREGROUND' >> /root/run_apache.sh && \ 
- chmod 755 /root/run_apache.sh
+RUN curl https://pyenv.run | bash
 
-EXPOSE 80
+WORKDIR '/app'
 
-CMD /root/run_apache.sh
+COPY ./bug_bounty_alert.py .
+COPY ./Pipfile.lock .
+COPY ./Pipfile .
+
+RUN pipenv install --system --deploy
+
+# Run the application
+ENTRYPOINT python3 ./bug_bounty_alert.py
