@@ -20,15 +20,22 @@ exec: true     # Enable running commands in your container.
 
 # Optional fields for more advanced use-cases.
 #
-#variables:                    # Pass environment variables as key value pairs.
-#  LOG_LEVEL: info
+variables:                    # Pass environment variables as key value pairs.
+  LOG_LEVEL: info
 
-#secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
-#  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the environment variable, the value is the name of the SSM parameter.
+secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
+  # The key is the name of the environment variable, the value is the name of the SSM parameter.
+  # AWS_ACCESS_KEY_ID: AWS_ACCESS_KEY_ID
+  # AWS_SECRET_ACCESS_KEY: AWS_SECRET_ACCESS_KEY
+  # AWS_REGION_NAME: AWS_REGION_NAME
+  # AWS_SECRET_ID: AWS_SECRET_ID
+  PD_SERVICE_ID: PD_SERVICE_ID
+  PD_TOKEN: PD_TOKEN
+  H1_PROGRAM_NAME: H1_PROGRAM_NAME
+  H1_API_KEY_NAME: H1_API_KEY_NAME
+  H1_API_KEY: H1_API_KEY
 
 # You can override any of the values defined above by environment.
 #environments:
 #  test:
 #    count: 2               # Number of tasks to run for the "test" environment.
-secrets:
-  MYAPIKEY: PASSWORD  
