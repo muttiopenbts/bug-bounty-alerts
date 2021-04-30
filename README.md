@@ -54,4 +54,5 @@ export H1_API_KEY=<>
 python3 ./bug_bounty_alert.py
 ```
 # Todo
+aws copilot
 AWS ECS support.
